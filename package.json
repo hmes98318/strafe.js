@@ -1,0 +1,22 @@
+{
+    "name": "flood.js",
+    "version": "0.1.0",
+    "description": "\\Javascript flood script",
+    "main": "index.js",
+    "scripts": {
+        "start": "node ./index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/hmes98318/flood.js.git"
+    },
+    "author": "hmes98318",
+    "license": "GPL-3.0",
+    "bugs": {
+        "url": "https://github.com/hmes98318/flood.js/issues"
+    },
+    "homepage": "https://github.com/hmes98318/flood.js#readme",
+    "dependencies": {
+        "commander": "^9.4.0"
+    }
+}
