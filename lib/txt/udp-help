@@ -1,0 +1,11 @@
+Usage: flood udp [options] target_host
+
+Options:
+  -p, --port <number>  port number (default: 80)
+  -B, --broadcast      Set Broadcast Address (UDP) (default: false)
+  -h, --help           read more information
+
+Example usage:
+  $ flood udp -p 8080 -B 192.168.1.10
+  $ flood udp domain.com
+  $ flood udp --help

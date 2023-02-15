@@ -1,0 +1,4 @@
+Example usage:
+  $ flood udp -p 8080 -B 192.168.1.10
+  $ flood udp domain.com
+  $ flood udp --help
