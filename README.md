@@ -1,4 +1,4 @@
-# flood.js
+# strafe.js
 
 This is a Node.js script for conducting flood attacks in various protocols such as UDP, TCP and ICMP.  
 It is intended for personal use and penetration testing purposes only. It is not intended for any illegal or malicious activity.  
