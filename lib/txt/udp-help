@@ -1,11 +1,15 @@
 Usage: flood udp [options] target_host
 
 Options:
-  -p, --port <number>  port number (default: 80)
-  -B, --broadcast      Set Broadcast Address (UDP) (default: false)
-  -h, --help           read more information
+  -p, --port <number>     port number (default: 80)
+  -B, --broadcast         Set Broadcast Address (UDP) (default: false)
+  -t, --timeout [string]  Usage time(s) (default: "30")
+  -T, --threads [string]  Number of Threads (default: "10")
+  -c, --content [string]  Set the content of the sent data packet (default: [0])
+  -h, --help              output usage information
 
 Example usage:
+  $ flood udp -p 8080 -T 20 192.168.1.10
   $ flood udp -p 8080 -B 192.168.1.10
-  $ flood udp domain.com
+  $ flood udp domain.com -t 60
   $ flood udp --help

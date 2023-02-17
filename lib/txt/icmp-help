@@ -1,0 +1,12 @@
+Usage: flood icmp [options] target_host
+
+Options:
+  -t, --timeout [string]  Usage time(s) (default: "30")
+  -T, --threads [string]  Number of Threads (default: "10")
+  -s, --packet [string]   Set packet payload size(bytes) (default: "56")
+  -h, --help              output usage information
+
+Example usage:
+  $ flood icmp -t 60 -T 20 192.168.1.10
+  $ flood icmp domain.com -s 24
+  $ flood icmp --help
