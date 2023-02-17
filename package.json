@@ -1,27 +1,27 @@
 {
-    "name": "flood",
+    "name": "strafe",
     "version": "0.1.0",
     "description": "\\Javascript flood script",
-    "main": "./flood",
+    "main": "./strafe",
     "scripts": {
-        "test": "./flood"
+        "test": "./strafe"
     },
     "preferGlobal": true,
     "directories": {
         "bin": "./bin",
         "lib": "./lib"
       },
-    "bin": "bin/flood",
+    "bin": "bin/strafe",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/hmes98318/flood.js.git"
+        "url": "git+https://github.com/hmes98318/strafe.js.git"
     },
     "author": "hmes98318",
     "license": "GPL-3.0",
     "bugs": {
-        "url": "https://github.com/hmes98318/flood.js/issues"
+        "url": "https://github.com/hmes98318/strafe.js/issues"
     },
-    "homepage": "https://github.com/hmes98318/flood.js#readme",
+    "homepage": "https://github.com/hmes98318/strafe.js#readme",
     "dependencies": {
         "commander": "^9.4.0"
     }
