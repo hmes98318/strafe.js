@@ -1,7 +1,7 @@
 # strafe.js
 
 This is a Node.js script for conducting flood attacks in various protocols such as UDP, TCP and ICMP.  
-It is intended for personal learning and penetration testing purposes only. It is not intended for any illegal or malicious activity.  
+It's for educational and penetration testing purposes only. Not for illegal or malicious activities.  
 
 ## License
 This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
