@@ -1,11 +1,17 @@
 {
-    "name": "flood.js",
+    "name": "flood",
     "version": "0.1.0",
     "description": "\\Javascript flood script",
-    "main": "index.js",
+    "main": "./flood",
     "scripts": {
-        "start": "node ./index.js"
+        "test": "./flood"
     },
+    "preferGlobal": true,
+    "directories": {
+        "bin": "./bin",
+        "lib": "./lib"
+      },
+    "bin": "bin/flood",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/hmes98318/flood.js.git"
