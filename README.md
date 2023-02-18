@@ -3,6 +3,12 @@
 This is a Node.js script for conducting flood attacks in various protocols such as UDP, TCP and ICMP.  
 It's for educational and penetration testing purposes only. Not for illegal or malicious activities.  
 
+## Roadmap
+- [x] udp  
+- [x] icmp
+- [ ] syn
+- [ ] http
+
 ## License
 This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
 
