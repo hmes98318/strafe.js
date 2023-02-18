@@ -1,4 +1,4 @@
-Usage: flood udp [options] target_host
+Usage: strafe udp [options] target_host
 
 Options:
   -p, --port <number>     port number (default: 80)
@@ -9,7 +9,7 @@ Options:
   -h, --help              output usage information
 
 Example usage:
-  $ flood udp -p 8080 -T 20 192.168.1.10
-  $ flood udp -p 8080 -B 192.168.1.10
-  $ flood udp domain.com -t 60
-  $ flood udp --help
+  $ strafe udp -p 8080 -T 20 192.168.1.10
+  $ strafe udp -p 8080 -B 192.168.1.10
+  $ strafe udp domain.com -t 60
+  $ strafe udp --help

@@ -1,5 +1,5 @@
 
 Example usage:
-  $ flood icmp -t 60 -T 20 192.168.1.10
-  $ flood icmp domain.com -s 24
-  $ flood icmp --help
+  $ strafe icmp -t 60 -T 20 192.168.1.10
+  $ strafe icmp domain.com -s 24
+  $ strafe icmp --help
