@@ -10,7 +10,7 @@
     "directories": {
         "bin": "./bin",
         "lib": "./lib"
-      },
+    },
     "bin": "bin/strafe",
     "repository": {
         "type": "git",
@@ -23,6 +23,8 @@
     },
     "homepage": "https://github.com/hmes98318/strafe.js#readme",
     "dependencies": {
-        "commander": "^9.4.0"
+        "bindings": "^1.5.0",
+        "commander": "^9.4.0",
+        "nan": "^2.17.0"
     }
 }
