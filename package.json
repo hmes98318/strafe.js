@@ -4,7 +4,8 @@
     "description": "\\Javascript flood script",
     "main": "./strafe",
     "scripts": {
-        "test": "./strafe"
+        "test": "./strafe",
+        "gyp:build": "node-gyp configure && node-gyp build --release"
     },
     "preferGlobal": true,
     "directories": {
