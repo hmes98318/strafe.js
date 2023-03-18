@@ -38,7 +38,6 @@ using namespace v8;
 
 
 int sockfd; // raw socket
-
 char dst_ip[20] = {0};
 int dst_port;
 
@@ -54,7 +53,24 @@ struct Ip
     u_short checksum;  // IP Header Checksum
     u_int32_t saddr;   // Source IP Address
     u_int32_t daddr;   // Destination IP Address
-};
+};  
+/*
+ *  0                   1                   2                   3   
+ *  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2
+ *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ *  |Version|  IHL  |Type of Service|          Total Length         |
+ *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ *  |         Identification        |Flags|      Fragment Offset    |
+ *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ *  |  Time to Live |    Protocol   |         Header Checksum       |
+ *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ *  |                       Source Address                          |
+ *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ *  |                    Destination Address                        |
+ *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ *  |                    Options                    |    Padding    |
+ *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+*/
 
 struct Udp
 {
@@ -63,6 +79,17 @@ struct Udp
     u_short len;      // Length of the entire UDP packet
     u_short checksum; // UDP Checksum
 };
+/*
+ *  0                   1                   2                   3   
+ *  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2
+ *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ *  |           Source Port          |       Destination Port       |
+ *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ *  |             Length            |            Checksum           |
+ *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ *  |                             data                              |
+ *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+*/
 
 struct Pseudo
 {
@@ -72,6 +99,7 @@ struct Pseudo
     u_char protocol; // Protocol
     u_short length;  // Length of the UDP segment
 };
+
 
 /* Generate random ipv4 address*/
 char *generate_ipv4()
