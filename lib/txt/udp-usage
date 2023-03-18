@@ -1,6 +1,6 @@
 
 Example usage:
-  $ strafe udp -p 8080 -T 20 192.168.1.10
-  $ strafe udp -p 8080 -B 192.168.1.10
+  $ strafe udp -p 8080 -t 20 -d 300 -s 50 192.168.1.10
+  $ strafe udp -p 8080 -d 1000 192.168.1.10
   $ strafe udp domain.com -t 60
   $ strafe udp --help

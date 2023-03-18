@@ -2,14 +2,13 @@ Usage: strafe udp [options] target_host
 
 Options:
   -p, --port <number>     port number (default: 80)
-  -B, --broadcast         Set Broadcast Address (UDP) (default: false)
-  -t, --timeout [string]  Usage time(s) (default: "30")
-  -T, --threads [string]  Number of Threads (default: "10")
-  -c, --content [string]  Set the content of the sent data packet (default: [0])
+  -t, --timeout <number>  Usage time(s) (default: 30)
+  -d, --delay <number>    Every send delay(ms) (default: 100)
+  -s, --size <number>     Set packet size(bytes) to sent (default: 20)
   -h, --help              output usage information
 
 Example usage:
-  $ strafe udp -p 8080 -T 20 192.168.1.10
-  $ strafe udp -p 8080 -B 192.168.1.10
+  $ strafe udp -p 8080 -t 20 -d 300 -s 50 192.168.1.10
+  $ strafe udp -p 8080 -d 1000 192.168.1.10
   $ strafe udp domain.com -t 60
   $ strafe udp --help
