@@ -1,3 +1,22 @@
+/*
+ * This file is part of strafe.js <https://github.com/hmes98318/strafe.js>
+ * Copyright (C) 2022-2023  hmes98318  <hmes98318@gmail.com>
+ * 
+ * strafe.js is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or 
+ * any later version.
+ * 
+ * strafe.js is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with strafe.js.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+
 #include <node.h>
 #include <nan.h>
 
@@ -16,6 +35,7 @@
 #define sleep_ms(milsec) usleep(milsec * 1000)
 
 using namespace v8;
+
 
 int sockfd; // raw socket
 
@@ -200,8 +220,6 @@ void *send_UDP(void *addr_info, int timeout = 60, int delay = 1000, int packetsi
         // sleep for milliseconds
         sleep_ms(delay);
     }
-
-    printf("Stop all process.");
     return 0;
 }
 
@@ -247,6 +265,7 @@ void Method(const FunctionCallbackInfo<Value> &args)
 
     printf("start send\n");
     send_UDP(&addr, timeout, delay, packetsize);
+    printf("Stop all process.\n");
     close(sockfd);
 }
 
