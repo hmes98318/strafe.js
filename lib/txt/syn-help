@@ -1,0 +1,13 @@
+Usage: strafe syn [options] target_host
+
+Options:
+  -p, --port <number>     port number (default: 80)
+  -t, --timeout <number>  Usage time(s) (default: 30)
+  -d, --delay <number>    Every send delay(ms) (default: 100)
+  -h, --help              output usage information
+
+Example usage:
+  $ strafe syn -p 4433 -t 20 -d 300 192.168.1.10
+  $ strafe syn -p 4433 -d 1000 192.168.1.10
+  $ strafe syn domain.com -t 60
+  $ strafe syn --help
