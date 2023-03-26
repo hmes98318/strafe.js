@@ -6,7 +6,7 @@ It can be used to conduct flood attacks in various protocols such as UDP, TCP, a
 ## Roadmap
 - [x] udp  
 - [x] icmp
-- [ ] syn
+- [x] syn
 - [ ] http
 
 
