@@ -1,6 +1,6 @@
 # strafe.js
 
-Strafe.js is a Node.js script designed for educational and penetration testing purposes.  
+Strafe.js is a simple Node.js script designed for educational and penetration testing purposes.  
 It can be used to conduct flood attacks in various protocols such as UDP, TCP, and ICMP.
 
 ## Roadmap
