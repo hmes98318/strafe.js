@@ -2,7 +2,7 @@
     "name": "strafe",
     "version": "0.2.0",
     "description": "\\Javascript flood script",
-    "main": "./strafe",
+    "main": "index.js",
     "scripts": {
         "test": "./strafe",
         "gyp:build": "node-gyp configure && node-gyp build --release"
