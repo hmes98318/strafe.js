@@ -3,7 +3,7 @@
 Strafe.js is a simple Node.js script designed for educational and penetration testing purposes.  
 It can be used to conduct flood attacks in various protocols such as UDP, TCP, and ICMP.  
 
-This script can only be run on Linux.  
+This script can only be run as **root** on Linux.  
 For Windows users, you will need to install [**WSL**](https://docs.microsoft.com/en-us/windows/wsl/install) and run the script within the WSL environment.  
 
 
