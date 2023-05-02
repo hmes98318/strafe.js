@@ -1,11 +1,11 @@
 {
     "name": "strafe",
     "version": "0.2.0",
-    "description": "\\Javascript flood script",
+    "description": "Node.js flood script for educational and penetration testing purposes",
     "main": "index.js",
     "scripts": {
         "test": "./strafe",
-        "gyp:build": "node-gyp configure && node-gyp build --release"
+        "gyp:build": "node-gyp configure && node-gyp rebuild --release"
     },
     "preferGlobal": true,
     "directories": {
