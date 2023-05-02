@@ -1,11 +1,13 @@
 Usage: strafe udp [options] target_host
 
 Options:
-  -p, --port <number>     port number (default: 80)
+  -p, --port <number>     Port number (default: 80)
   -t, --timeout <number>  Usage time(s) (default: 30)
   -d, --delay <number>    Every send delay(ms) (default: 100)
   -s, --size <number>     Set packet size(bytes) to sent (default: 20)
-  -h, --help              output usage information
+  -T, --threads <number>  Number of Threads (default: 2)
+  -F, --fakeip            Generate random ip (default: disable)
+  -h, --help              Output usage information
 
 Example usage:
   $ strafe udp -p 8080 -t 20 -d 300 -s 50 192.168.1.10
