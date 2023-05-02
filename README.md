@@ -1,12 +1,27 @@
 # strafe.js
 
 Strafe.js is a simple Node.js script designed for educational and penetration testing purposes.  
-It can be used to conduct flood attacks in various protocols such as UDP, TCP, and ICMP.
+It can be used to conduct flood attacks in various protocols such as UDP, TCP, and ICMP.  
 
-## Roadmap
+This script can only be run on Linux.  
+For Windows users, you will need to install [**WSL**](https://docs.microsoft.com/en-us/windows/wsl/install) and run the script within the WSL environment.  
+
+
+## Installation
+```
+$ npm i strafe -g
+```
+
+## How to use?
+**strafe [protocols] [options] host**  
+* strafe udp -p 8080 -t 20 -d 300 -s 50 192.168.1.10
+* strafe udp -t 60 domain.com
+
+
+## To do list
 - [x] udp  
-- [x] icmp
 - [x] syn
+- [ ] icmp (incomplete)
 - [ ] http
 
 
