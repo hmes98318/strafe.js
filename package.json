@@ -4,7 +4,7 @@
     "description": "Node.js flood script for educational and penetration testing purposes",
     "main": "index.js",
     "scripts": {
-        "test": "./strafe",
+        "test": "node index.js",
         "gyp:build": "node-gyp configure && node-gyp rebuild --release"
     },
     "preferGlobal": true,
