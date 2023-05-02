@@ -18,7 +18,7 @@ jobs:
       - run: npm ci
       - run: npm install -g node-gyp
       - run: npm run gyp:build
-      - run: sudo npm test
+      - run: npm test
 
   publish-npm:
     needs: build
