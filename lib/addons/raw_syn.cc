@@ -314,13 +314,19 @@ void Method(const FunctionCallbackInfo<Value> &args)
     if (sockfd < 0)
     {
         perror("socket()");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     if (setsockopt(sockfd, IPPROTO_IP, IP_HDRINCL, (char *)&on, sizeof(on)) < 0)
     {
         perror("setsockopt()");
-        exit(1);
+        exit(EXIT_FAILURE);
+    }
+
+    if (setuid(getpid()) == -1)
+    {
+        perror("setuid()");
+        exit(EXIT_FAILURE);
     }
 
     printf("start process.\n");
@@ -334,7 +340,7 @@ void Method(const FunctionCallbackInfo<Value> &args)
         if (threads[i].get_id() == std::thread::id())
         {
             printf("Failed to create thread %d", i);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         printf("\n");
     }
